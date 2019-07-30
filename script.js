@@ -7,19 +7,15 @@ const prevBtn = document.querySelector('#carousel-prev');
 let offsetX = 0;
 let startPos = 0;
 let moveOffset = 0;
-
 let initCarouselTransitionValue = 'all 0.05s ease-in';
-
 let tileWidth = tiles[0].clientWidth;
+let tilesQ = tiles.length;
+let counter = 1;
+let carouselTransitionXPercentage = 100;
 
 window.addEventListener('resize', function() {
   tileWidth = tiles[0].clientWidth;
 });
-
-let tilesQ = tiles.length;
-
-let counter = 1;
-let carouselTransitionXPercentage = 100;
 
 function evalTilesInRow() {
   let itemsInRow = carouselContainer.clientWidth / tileWidth;
