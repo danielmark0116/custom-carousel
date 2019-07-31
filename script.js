@@ -1,8 +1,8 @@
 const carouselContainer = document.getElementById('carousel-container');
-const tileBox = document.querySelector('.carousel-box');
+const tileBox = document.getElementsByClassName('carousel-box');
 const tiles = document.querySelectorAll('.carousel-tile');
-const nextBtn = document.querySelector('#carousel-next');
-const prevBtn = document.querySelector('#carousel-prev');
+const nextBtn = document.getElementById('carousel-next');
+const prevBtn = document.getElementById('carousel-prev');
 const pagination = document.getElementById('carousel-pagination');
 
 let offsetX = 0;
