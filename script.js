@@ -3,6 +3,7 @@ const tileBox = document.querySelector('.carousel-box');
 const tiles = document.querySelectorAll('.carousel-tile');
 const nextBtn = document.querySelector('#carousel-next');
 const prevBtn = document.querySelector('#carousel-prev');
+const pagination = document.getElementById('carousel-pagination');
 
 let offsetX = 0;
 let startPos = 0;
@@ -33,6 +34,27 @@ function carouselContainerPositionReset() {
   carouselContainer.style.transform = `translateX(0)`;
 }
 
+for (let i = 1; i < evalMaxScreens() + 1; i++) {
+  let dot = document.createElement('button');
+  dot.setAttribute('class', 'carousel-slide-number-btn');
+  dot.dataset.slideNumber = i;
+  dot.innerText = i;
+  pagination.appendChild(dot);
+}
+const slideNumberBtns = document.querySelectorAll('.carousel-slide-number-btn');
+slideNumberBtns.forEach(btn => {
+  let slideNumber = btn.dataset.slideNumber;
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    jumpToSlide(slideNumber);
+  });
+});
+
+function jumpToSlide(slideNumber) {
+  counter = slideNumber;
+  tileBox.style.transform = `translateX(${-carouselTransitionXPercentage *
+    (counter - 1)}%)`;
+}
 function prevSlide() {
   if (counter > 1) {
     counter--;
@@ -153,11 +175,11 @@ function mouseMoveEvent(e) {
 
   let predkosc = Math.abs(mousePath) / czas;
 
-  if (predkosc > 450) {
+  if (predkosc > 450 && mouseDown) {
     trigger = true;
   }
 
-  if (mouseDown && trigger) {
+  if (trigger && carouselContainer.style.transform === `translateX(0)`) {
     carouselContainer.style.transform = `translateX(${-mousePath * 0.4}px)`;
   }
 }
