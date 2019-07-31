@@ -13,16 +13,24 @@ let tileWidth = tiles[0].clientWidth;
 let tilesQ = tiles.length;
 let counter = 1;
 let carouselTransitionXPercentage = 100;
+let maxScreens = evalMaxScreens();
 // For preventing triggering nextSlide() or prevSlide() on 'touch Click' (when user touches and not moving the finger)
 let touchMoved = false;
 
 window.addEventListener('resize', function() {
-  tileWidth = tiles[0].clientWidth;
+  this.setTimeout(function() {
+    tileWidth = tiles[0].clientWidth;
+    tilesQ = tiles.length;
+    maxScreens = evalMaxScreens();
+    this.console.log(maxScreens);
+    tileBox.style.transform = `translateX(0)`;
+    createPaginationBtns();
+  }, 500);
 });
 
 function evalTilesInRow() {
   let itemsInRow = carouselContainer.clientWidth / tileWidth;
-  return Math.floor(itemsInRow);
+  return itemsInRow;
 }
 function evalMaxScreens() {
   let maxScreens = tilesQ / evalTilesInRow();
@@ -34,21 +42,30 @@ function carouselContainerPositionReset() {
   carouselContainer.style.transform = `translateX(0)`;
 }
 
-for (let i = 1; i < evalMaxScreens() + 1; i++) {
-  let dot = document.createElement('button');
-  dot.setAttribute('class', 'carousel-slide-number-btn');
-  dot.dataset.slideNumber = i;
-  dot.innerText = i;
-  pagination.appendChild(dot);
-}
-const slideNumberBtns = document.querySelectorAll('.carousel-slide-number-btn');
-slideNumberBtns.forEach(btn => {
-  let slideNumber = btn.dataset.slideNumber;
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    jumpToSlide(slideNumber);
+function createPaginationBtns() {
+  pagination.innerHTML = '';
+  for (let i = 1; i < maxScreens + 1; i++) {
+    if (i <= maxScreens) {
+      let dot = document.createElement('button');
+      dot.setAttribute('class', 'carousel-slide-number-btn');
+      dot.dataset.slideNumber = i;
+      dot.innerText = i;
+      pagination.appendChild(dot);
+    }
+  }
+  const slideNumberBtns = document.querySelectorAll(
+    '.carousel-slide-number-btn'
+  );
+  slideNumberBtns.forEach(btn => {
+    let slideNumber = btn.dataset.slideNumber;
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      jumpToSlide(slideNumber);
+    });
   });
-});
+}
+
+createPaginationBtns();
 
 function jumpToSlide(slideNumber) {
   counter = slideNumber;
@@ -68,7 +85,7 @@ function prevSlide() {
   }
 }
 function nextSlide() {
-  if (counter < evalMaxScreens()) {
+  if (counter < maxScreens) {
     tileBox.style.transform = `translateX(${-carouselTransitionXPercentage *
       counter}%)`;
     counter++;
@@ -133,7 +150,7 @@ function resetMouseValues() {
 function mouseDownEvent(e) {
   mouseDown = true;
   mousePath = 0;
-  startingPosX = e.offsetX;
+  startingPosX = e.clientX;
   carouselContainer.style.transition = initCarouselTransitionValue;
   startTime = new Date().valueOf();
 }
@@ -172,7 +189,7 @@ function mouseUpEvent(e) {
 
 function mouseMoveEvent(e) {
   e.preventDefault();
-  mousePath = startingPosX - e.offsetX;
+  mousePath = startingPosX - e.clientX;
   let mouseMoveTime = (new Date().valueOf() - startTime) / 1000;
   let mouseV = Math.abs(mousePath) / mouseMoveTime;
 

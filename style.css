@@ -34,17 +34,28 @@ body {
 }
 
 .test {
-  flex: 1 0 100%;
+  flex: 1 0 25%;
   height: fit-content;
   min-height: 200px;
   max-height: 50vh;
   margin: 0 0;
   padding: 0 0;
   transition: 0.1s ease;
-  /* background: red; */
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: 900px) {
+  .test {
+    flex: 1 0 50%;
+  }
+}
+
+@media (max-width: 500px) {
+  .test {
+    flex: 1 0 100%;
+  }
 }
 
 .carousel-tile img {
