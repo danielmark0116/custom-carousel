@@ -179,7 +179,7 @@ function mouseMoveEvent(e) {
     trigger = true;
   }
 
-  if (trigger && carouselContainer.style.transform === `translateX(0)`) {
+  if (trigger) {
     carouselContainer.style.transform = `translateX(${-mousePath * 0.4}px)`;
   }
 }
