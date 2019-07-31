@@ -24,17 +24,25 @@ window.addEventListener('resize', function() {
     maxScreens = evalMaxScreens();
     this.console.log(maxScreens);
     tileBox.style.transform = `translateX(0)`;
+    counter = 1;
     createPaginationBtns();
   }, 500);
 });
 
 function evalTilesInRow() {
   let itemsInRow = carouselContainer.clientWidth / tileWidth;
-  return itemsInRow;
+  return Math.round(itemsInRow);
 }
 function evalMaxScreens() {
-  let maxScreens = tilesQ / evalTilesInRow();
-  return Math.floor(maxScreens);
+  console.log('itemsInRow: ', evalTilesInRow());
+  console.log('tiles: ', tilesQ);
+  let maxScreens = Math.floor(tilesQ / evalTilesInRow());
+  console.log('screens: ', maxScreens);
+  console.log('tiles / screens: ', tilesQ / maxScreens);
+  if (evalTilesInRow() < tilesQ / maxScreens) {
+    maxScreens++;
+  }
+  return maxScreens;
 }
 
 function carouselContainerPositionReset() {
