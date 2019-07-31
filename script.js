@@ -96,6 +96,7 @@ function touchMove(e) {
 
 function touchEnd(e) {
   e.preventDefault();
+
   if (Math.abs(moveOffset) > 100 && touchMoved) {
     if (moveOffset < 0) {
       nextSlide();
@@ -105,6 +106,7 @@ function touchEnd(e) {
   } else {
     carouselContainer.style.transform = `translateX(0)`;
   }
+
   touchMoved = false;
 }
 
@@ -116,7 +118,6 @@ nextBtn.addEventListener('click', nextSlide);
 prevBtn.addEventListener('click', prevSlide);
 
 // mouse
-
 let mouseDown = false;
 let mousePath = 0;
 let startingPosX = 0;
@@ -134,12 +135,12 @@ function mouseDownEvent(e) {
   mousePath = 0;
   startingPosX = e.offsetX;
   carouselContainer.style.transition = initCarouselTransitionValue;
-
   startTime = new Date().valueOf();
 }
 
 function mouseLeaveEvent(e) {
   e.preventDefault();
+
   if (Math.abs(mousePath) > 100 && trigger) {
     if (mousePath > 0) {
       nextSlide();
@@ -149,11 +150,13 @@ function mouseLeaveEvent(e) {
   } else {
     carouselContainer.style.transform = `translateX(0)`;
   }
+
   resetMouseValues();
 }
 
 function mouseUpEvent(e) {
   e.preventDefault();
+
   if (Math.abs(mousePath) > 100 && trigger) {
     if (mousePath > 0) {
       nextSlide();
@@ -170,12 +173,10 @@ function mouseUpEvent(e) {
 function mouseMoveEvent(e) {
   e.preventDefault();
   mousePath = startingPosX - e.offsetX;
+  let mouseMoveTime = (new Date().valueOf() - startTime) / 1000;
+  let mouseV = Math.abs(mousePath) / mouseMoveTime;
 
-  let czas = (new Date().valueOf() - startTime) / 1000;
-
-  let predkosc = Math.abs(mousePath) / czas;
-
-  if (predkosc > 450 && mouseDown) {
+  if (mouseV > 450 && mouseDown) {
     trigger = true;
   }
 
