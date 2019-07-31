@@ -12,6 +12,8 @@ let tileWidth = tiles[0].clientWidth;
 let tilesQ = tiles.length;
 let counter = 1;
 let carouselTransitionXPercentage = 100;
+// For preventing triggering nextSlide() or prevSlide() on 'touch Click' (when user touches and not moving the finger)
+let touchMoved = false;
 
 window.addEventListener('resize', function() {
   tileWidth = tiles[0].clientWidth;
@@ -56,29 +58,37 @@ function nextSlide() {
   }
 }
 
-carouselContainer.addEventListener('touchstart', function(e) {
+function touchStart(e) {
   e.preventDefault();
   startPos = e.changedTouches[0].clientX;
   carouselContainer.style.transition = initCarouselTransitionValue;
-});
-carouselContainer.addEventListener('touchmove', function(e) {
+}
+
+function touchMove(e) {
+  touchMoved = true;
   e.preventDefault();
   offsetX = e.touches[0].clientX;
   moveOffset = offsetX - startPos;
   carouselContainer.style.transform = `translateX(${moveOffset * 0.4}px)`;
-});
-carouselContainer.addEventListener('touchend', function(e) {
+}
+
+function touchEnd(e) {
   e.preventDefault();
-  if (Math.abs(moveOffset) > 100) {
+  if (Math.abs(moveOffset) > 100 && touchMoved) {
     if (moveOffset < 0) {
       nextSlide();
-    } else {
+    } else if (moveOffset > 0) {
       prevSlide();
     }
   } else {
     carouselContainer.style.transform = `translateX(0)`;
   }
-});
+  touchMoved = false;
+}
+
+carouselContainer.addEventListener('touchstart', touchStart);
+carouselContainer.addEventListener('touchmove', touchMove);
+carouselContainer.addEventListener('touchend', touchEnd);
 
 nextBtn.addEventListener('click', nextSlide);
 prevBtn.addEventListener('click', prevSlide);
@@ -97,16 +107,30 @@ function resetMouseValues() {
   trigger = false;
 }
 
-carouselContainer.addEventListener('mousedown', function(e) {
+function mouseDownEvent(e) {
   mouseDown = true;
   mousePath = 0;
   startingPosX = e.offsetX;
   carouselContainer.style.transition = initCarouselTransitionValue;
 
   startTime = new Date().valueOf();
-});
+}
 
-carouselContainer.addEventListener('mouseleave', function(e) {
+function mouseLeaveEvent(e) {
+  e.preventDefault();
+  if (Math.abs(mousePath) > 100 && trigger) {
+    if (mousePath > 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+  } else {
+    carouselContainer.style.transform = `translateX(0)`;
+  }
+  resetMouseValues();
+}
+
+function mouseUpEvent(e) {
   e.preventDefault();
   if (Math.abs(mousePath) > 100 && trigger) {
     if (mousePath > 0) {
@@ -119,25 +143,9 @@ carouselContainer.addEventListener('mouseleave', function(e) {
   }
 
   resetMouseValues();
-});
+}
 
-carouselContainer.addEventListener('mouseup', function(e) {
-  //   copied from touch
-  e.preventDefault();
-  if (Math.abs(mousePath) > 100 && trigger) {
-    if (mousePath > 0) {
-      nextSlide();
-    } else {
-      prevSlide();
-    }
-  } else {
-    carouselContainer.style.transform = `translateX(0)`;
-  }
-
-  resetMouseValues();
-});
-
-carouselContainer.addEventListener('mousemove', function(e) {
+function mouseMoveEvent(e) {
   e.preventDefault();
   mousePath = startingPosX - e.offsetX;
 
@@ -152,16 +160,9 @@ carouselContainer.addEventListener('mousemove', function(e) {
   if (mouseDown && trigger) {
     carouselContainer.style.transform = `translateX(${-mousePath * 0.4}px)`;
   }
-});
+}
 
-// SCROLL WHEEL / touchpad
-
-// carouselContainer.onwheel = function(e) {
-//   e.preventDefault();
-//   console.log(e.deltaX);
-//   carouselContainer.style.transform = `translateX(${e.deltaX * 2.5}px)`;
-//   if (Math.abs(e.deltaX) > 50) {
-//     nextSlide();
-//     carouselContainer.style.transform = `translateX(0)`;
-//   }
-// };
+carouselContainer.addEventListener('mousedown', mouseDownEvent);
+carouselContainer.addEventListener('mouseleave', mouseLeaveEvent);
+carouselContainer.addEventListener('mouseup', mouseUpEvent);
+carouselContainer.addEventListener('mousemove', mouseMoveEvent);
